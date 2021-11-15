@@ -4,6 +4,6 @@ version: 0.1.0
 authors:
   - Nicolas Bettenburg <718340+nicbet@users.noreply.github.com>
 
-crystal: 0.24.1
+crystal: 1.2.2
 
 license: MIT

@@ -1,3 +1,3 @@
-module Cart
+module CART
   VERSION = "0.1.0"
 end
