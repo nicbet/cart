@@ -1,17 +1,12 @@
 require "./node"
 
 module CART
-  class Leaf < CART::Node
-    property key : String
-    property value : String
-
+  class Leaf < Node
     def initialize(key, value)
-      @key = key
-      @value = value
+      super()
+      @node_type = NodeType::Leaf
     end
 
-    def to_s(io)
-      io << "CART::Leaf #{@key} -> #{@value}>"
-    end
+
   end
 end
