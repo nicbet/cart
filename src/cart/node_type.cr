@@ -31,5 +31,9 @@ module CART
     def inner_node?
       self == NodeType::Node4 || self == NodeType::Node16 || self == NodeType::Node48 || self == NodeType::Node256
     end
+
+    def none?
+      self == NodeType::None
+    end
   end
 end

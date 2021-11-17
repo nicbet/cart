@@ -5,38 +5,20 @@ module CART
     # Property common to all nodes
     property node_type : NodeType
 
-    # Inner Node properties
-    property keys : Array(UInt8)
-    property children :  Array(Pointer(CART::Node))
-    property prefix : Array(UInt8)
-    property prefix_len : Int16
-    property size : UInt8
-
-    # Leaf Nodes
-    property key : String | Nil
-    property value : String | Nil
-    property key_size : UInt64
-
     # Even though we are implementing an 'abstract' class
     # that we can never initialize, we need to provide a
     # dummy constructor to avoid a compiler error.
     # See https://github.com/crystal-lang/crystal/issues/2827
     def initialize
       @node_type = NodeType::None
-
-      @keys = [] of UInt8
-      @children = [] of Pointer(CART::Node)
-      @prefix = [] of UInt8
-      @prefix_len = 0
-      @size = 0
-
-      @key_size = 0
-      @key = nil
-      @value = nil
     end
 
     def to_s(io)
       io << "CART::#{@node_type}"
+    end
+
+    def null?
+      @node_type.none?
     end
 
     def leaf?
@@ -64,15 +46,47 @@ module CART
     end
 
     def matches_key?(key)
-      @key == key
+      false
     end
 
-    def value
-      @value
+    def prefix_mismatch(key : String, depth : Int)
+      return 0
+    end
+
+    def prefix
+      Bytes.new(0)
+    end
+
+    def prefix_len
+      0
     end
 
     def full?
-      @keys.size == max_size
+      true
+    end
+
+    def index(key : UInt8)
+      -1
+    end
+
+    def min
+      nil
+    end
+
+    def max
+      nil
+    end
+
+    def find_child(key : UInt8)
+      raise("Not implemented")
+    end
+
+    def value
+      raise("Not implemented")
+    end
+
+    def longest_common_prefix(other : Node, depth : Int)
+      return 0
     end
 
     def max_size
@@ -105,50 +119,8 @@ module CART
       end
     end
 
-    def add_child(key : UInt8, node_ptr : Pointer(CART::Node))
-      case @node_type
-      when NodeType::Node4
-        add_child_4(key, node_ptr)
-      # when NodeType::Node16
-      #   add_child_16(key, node)
-      # when NodeType::Node48
-      #   add_child_48(key, node)
-      # when NodeType::Node256
-      #   add_child_256(key, node)
-      else
-        return false
-      end
-    end
-
-
-    def add_child_4(key : UInt8, node_ptr : Pointer(CART::Node))
-      if full?
-        grow!
-        add_child(key, node_ptr)
-      else
-        # Determine the position to insert
-        index = 0
-        while index < @size
-          break if key < @keys[index]
-          index += 1
-        end
-
-        # Insert element at index, shuffling others if needed
-        @keys.insert(index: index, object: key)
-
-        # !! Compiler Bug !!
-        @children.insert(index: index, object: node_ptr)
-        @size += 1
-      end
-      return true
-    end
-
-    # def add_child_16(key, node_ptr); end
-    # def add_child_48(key, node_ptr); end
-    # def add_child_256(key, node_ptr); end
-
-    def grow!
-      # raise NotImplementedError
+    def add_child(key : UInt8, node : Node)
+      raise("Not implemented")
     end
   end
 end
