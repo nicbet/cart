@@ -1,4 +1,5 @@
 require "./cart/*"
+require "./util/*"
 
 module CART
   # Aliases

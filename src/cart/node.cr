@@ -21,6 +21,10 @@ module CART
       @node_type.none?
     end
 
+    def children
+      raise("Not implemented")
+    end
+
     def leaf?
       @node_type.leaf?
     end
@@ -50,6 +54,10 @@ module CART
     end
 
     def prefix_mismatch(key : String, depth : Int)
+      prefix_mismatch(key.codepoints, depth)
+    end
+
+    def prefix_mismatch(key : Array(Int32), depth : Int)
       return 0
     end
 
@@ -77,7 +85,11 @@ module CART
       nil
     end
 
-    def find_child(key : UInt8)
+    def find_child(key : Char)
+      find_child(key.ord)
+    end
+
+    def find_child(key : Int32)
       raise("Not implemented")
     end
 
@@ -119,7 +131,11 @@ module CART
       end
     end
 
-    def add_child(key : UInt8, node : Node)
+    def add_child(key : Int32, node : Node)
+      raise("Not implemented")
+    end
+
+    def add_child(key : Char, node : Node)
       raise("Not implemented")
     end
   end
