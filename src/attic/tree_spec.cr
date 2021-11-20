@@ -11,20 +11,32 @@ describe CART::Tree do
     tree = CART::Tree.new
     tree.insert("hello", "world")
 
-    tree.size.should eq(1)
     tree.root.null?.should be_false
-    tree.root.value.leaf?.should be_true
-    tree.root.value.key_str.should eq("hello")
-    tree.root.value.value.should eq("world")
+    tree.size.should eq(1)
   end
 
-  it "allows us to insert multiple values with common prefix" do
+  it "allows us to insert a value and uses that value as key" do
     tree = CART::Tree.new
-    tree.insert("bee")
-    tree.insert("bet")
-    tree.insert("beg")
+    tree.insert("cat")
+
+    tree.root.null?.should be_false
+    tree.size.should eq(1)
+    tree.root.leaf?.should be_true
+    tree.root.as(CART::Leaf).value.should eq("cat")
+    tree.root.as(CART::Leaf).key_str.should eq("cat")
+  end
+
+  it "inserts multiple values with a common prefix" do
+    tree = CART::Tree.new
+    tree.insert("cat")
+    tree.insert("car")
+    tree.insert("cap")
 
     tree.size.should eq(3)
+    tree.root.inner_node?.should be_true
+    tree.root.node4?.should be_true
+    tree.root.as(CART::Node4).prefix_len.should eq(2)
+    tree.root.as(CART::Node4).prefix.to_str.should eq("ca")
   end
 
   it "should be able to retrieve the inserted term via search after single insert operation" do
@@ -51,7 +63,7 @@ describe CART::Tree do
     tree.search("aa").should eq("aa")
   end
 
-  it "split a node with similar prefix into new nodes and be searchable" do
+  it "a node with similar prefix should be split into new nodes and be searchable" do
     tree = CART::Tree.new
     tree.insert("A")
     tree.insert("a")
@@ -60,18 +72,5 @@ describe CART::Tree do
     tree.search("a").should eq("a")
     tree.search("aa").should eq("aa")
     tree.search("A").should eq("A")
-  end
-
-  it "should call each" do
-    tree = CART::Tree.new
-    tree.insert("acanthocarpous")
-    tree.insert("Acanthocephala")
-    tree.insert("acanthocephalan")
-
-    puts "\n\n"
-    tree.each do |n|
-      puts n.value.value
-    end
-    puts "\n\n"
   end
 end

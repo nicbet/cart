@@ -21,7 +21,7 @@ module CART
       return false if full?
 
       # Determine the position to insert, instead of SIMD instructions, we use binary search
-      index = @keys.bsearch_index { |k| key < k} || 0
+      index = @keys.bsearch_index { |k| key < k} || @size
 
       # Insert element at index, shuffling others to the right if needed
       ((index+1)..@size).reverse_each do |i|

@@ -66,6 +66,22 @@ module CART
       end
     end
 
+    # Add a child to an inner node if not full
+    def replace_child(key : Int32, node : Node)
+      return false unless inner_node?
+
+      index = index_for(key)
+      if index >= 0
+        @keys[index] = key
+        @children[index] = node
+      end
+      return true
+    end
+
+    def replace_child(key : Char, node : Node)
+      replace_child(key.ord, node)
+    end
+
     # Returns the minimum child at the current node
     def min
       return @children[0].min

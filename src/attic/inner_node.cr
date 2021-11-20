@@ -47,6 +47,22 @@ module CART
       return index
     end
 
+    def index_for(key : Char)
+      -1
+    end
+
+    def index_for(key : Int32)
+      -1
+    end
+
+    def replace_child(key : Char, node : Node)
+      replace_child(key.ord, node)
+    end
+
+    def replace_child(key : Int32, node : Node)
+      return false
+    end
+
     # For convenience
     def prefix_mismatch(key : String, depth : Int)
       prefix_mismatch(key.codepoints, depth)
