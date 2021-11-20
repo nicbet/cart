@@ -147,7 +147,7 @@ module CART
       insert(key.codepoints, value.codepoints)
     end
 
-    # Return the node that contains the provided key,
+    # Return the value of the node that contains the provided key,
     # or nil if not found
     def search(key : Array(Int32))
       ensure_null_terminated(key)
@@ -186,6 +186,44 @@ module CART
       search(key.codepoints)
     end
 
+    # Return the node that contains the provided key,
+    # or nil if not found
+    def find_node(key : Array(Int32))
+      ensure_null_terminated(key)
+      recursive_find_node(@root, key, 0)
+    end
+
+    # Recursive search helper function that traverses the tree.
+    # Returns the node that contains the passed in key, or nil if not found.
+    def recursive_find_node(current_ptr, key, depth)
+      return nil if current_ptr.nil? || current_ptr.null?
+      current = current_ptr.value
+
+      # If we are looking at a leaf node try to match the given key
+      if current.leaf?
+        if current.matches_key?(key)
+          return current
+        end
+        return nil
+      end
+
+      # Check if our key mismatches the current compressed path
+      if current.prefix_mismatch(key, depth) != current.prefix_len
+        # Bail if there is a mismatch during traversal
+        return nil
+      else
+        # Otherwise increase depth accordingly
+        depth += current.prefix_len
+      end
+
+      # Find the next node at specified index and depth
+      recursive_find_node(current.find_child(key[depth]), key, depth+1)
+    end
+
+    # Convenience method for finding a node given a String
+    def find_node(key : String)
+      find_node(key.codepoints)
+    end
 
     # Execute given block for each node in prefix order
     def each(&block : Pointer(Node) -> _)
